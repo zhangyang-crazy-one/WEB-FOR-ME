@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据治理和数据生命周期 - 交互式流程图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .diagram {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            margin: 20px 0;
+        }
+
+        .node {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .node.active {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .node-label {
+            position: absolute;
+            max-width: 250px;
+            padding: 15px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .node:hover .node-label {
+            opacity: 1;
+        }
+
+        /* 节点颜色 */
+        .node-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .node-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .node-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .node-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .node-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .node-6 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .node-7 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+
+        /* 节点位置 */
+        .node-1 { top: 50px; left: 100px; }
+        .node-2 { top: 50px; left: 400px; }
+        .node-3 { top: 50px; left: 700px; }
+        .node-4 { top: 300px; left: 100px; }
+        .node-5 { top: 300px; left: 400px; }
+        .node-6 { top: 300px; left: 700px; }
+        .node-7 { top: 550px; left: 400px; }
+
+        /* 连接线 */
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .connection {
+            stroke: #cbd5e0;
+            stroke-width: 3;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+
+        .connection.active {
+            stroke: #667eea;
+            stroke-width: 4;
+            animation: dash 1s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .legend h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .legend p {
+            color: #4a5568;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .diagram {
+                height: 600px;
+                transform: scale(0.7);
+                transform-origin: top center;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 数据治理和数据生命周期</h1>
+        <p>第5章 数据治理 - 交互式流程图</p>
+    </div>
+
+    <div class="container">
+        <div class="diagram">
+            <svg>
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#cbd5e0" />
+                    </marker>
+                </defs>
+                
+                <!-- 连接线 -->
+                <path class="connection" d="M 240 120 L 400 120" stroke-dasharray="5,5"/>
+                <path class="connection" d="M 540 120 L 700 120" stroke-dasharray="5,5"/>
+                <path class="connection" d="M 170 190 L 170 300" stroke-dasharray="5,5"/>
+                <path class="connection" d="M 770 190 L 770 300" stroke-dasharray="5,5"/>
+                <path class="connection" d="M 240 370 L 400 370" stroke-dasharray="5,5"/>
+                <path class="connection" d="M 540 370 L 700 370" stroke-dasharray="5,5"/>
+                <path class="connection" d="M 470 440 L 470 550" stroke-dasharray="5,5"/>
+            </svg>
+
+            <!-- 节点 -->
+            <div class="node node-1 active" data-node="1">
+                <span>策划</span>
+                <div class="node-label" style="top: 150px; left: 0;">
+                    <strong>策划：</strong>将数据要求与业务战略连接起来
+                </div>
+            </div>
+
+            <div class="node node-2" data-node="2">
+                <span>设计和赋能</span>
+                <div class="node-label" style="top: 150px; left: 0;">
+                    <strong>设计和赋能：</strong>确保有适当的策略来启用数据及随着时间推移防止数据的滥用
+                </div>
+            </div>
+
+            <div class="node node-3" data-node="3">
+                <span>创建/获取</span>
+                <div class="node-label" style="top: 150px; left: -110px;">
+                    <strong>创建/获取：</strong>确保数据按照约定的方法创建或获取
+                </div>
+            </div>
+
+            <div class="node node-4" data-node="4">
+                <span>提高</span>
+                <div class="node-label" style="top: -80px; left: 0;">
+                    <strong>提高：</strong>使企业能够识别并利用机会从数据中获取额外价值
+                </div>
+            </div>
+
+            <div class="node node-5" data-node="5">
+                <span>使用</span>
+                <div class="node-label" style="top: -80px; left: 0;">
+                    <strong>使用：</strong>确保访问得到管理及数据不被滥用
+                </div>
+            </div>
+
+            <div class="node node-6" data-node="6">
+                <span>存储/维护</span>
+                <div class="node-label" style="top: -80px; left: -110px;">
+                    <strong>存储/维护：</strong>确保数据根据策略和法规要求来存储
+                </div>
+            </div>
+
+            <div class="node node-7" data-node="7">
+                <span>销毁</span>
+                <div class="node-label" style="top: -80px; left: 0;">
+                    <strong>销毁：</strong>根据策略和法规要求销毁数据
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>💡 数据生命周期说明</h3>
+            <p><strong>提示：</strong>将鼠标悬停在节点上查看详细说明</p>
+            <p><strong>流程：</strong>策划 → 设计和赋能 → 创建/获取 → 存储/维护 → 销毁</p>
+            <p><strong>并行流程：</strong>策划 → 提高 → 使用 → 存储/维护</p>
+            <p><strong>资料来源：</strong>改编自 DAMA-DMBOK2，第29页</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>📚 图5-2 数据治理和数据生命周期 | 第5章 数据治理</p>
+        <p>© 2024 交互式可视化 | 点击节点查看详情</p>
+    </div>
+
+    <script>
+        // 节点交互效果
+        const nodes = document.querySelectorAll('.node');
+        const connections = document.querySelectorAll('.connection');
+
+        nodes.forEach(node => {
+            node.addEventListener('click', function() {
+                // 移除所有active类
+                nodes.forEach(n => n.classList.remove('active'));
+                connections.forEach(c => c.classList.remove('active'));
+                
+                // 添加active类到当前节点
+                this.classList.add('active');
+                
+                // 高亮相关连接线
+                const nodeNum = this.dataset.node;
+                highlightConnections(nodeNum);
+            });
+        });
+
+        function highlightConnections(nodeNum) {
+            const connectionMap = {
+                '1': [0, 2],
+                '2': [1],
+                '3': [3],
+                '4': [4],
+                '5': [5],
+                '6': [6],
+                '7': []
+            };
+
+            if (connectionMap[nodeNum]) {
+                connectionMap[nodeNum].forEach(index => {
+                    connections[index].classList.add('active');
+                });
+            }
+        }
+
+        // 自动循环展示
+        let currentNode = 0;
+        setInterval(() => {
+            currentNode = (currentNode + 1) % nodes.length;
+            nodes[currentNode].click();
+        }, 3000);
+    </script>
+</body>
+</html>
+
