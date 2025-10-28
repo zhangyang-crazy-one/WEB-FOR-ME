@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zachman框架 - 企业架构框架</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .intro {
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .intro p {
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .framework-container {
+            padding: 40px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            border: 2px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .row-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            text-align: left;
+            min-width: 180px;
+        }
+
+        td {
+            background: white;
+            cursor: pointer;
+            position: relative;
+        }
+
+        td:hover {
+            background: #f0f4ff;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            z-index: 10;
+        }
+
+        .cell-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .cell-content {
+            font-size: 0.85em;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .legend {
+            padding: 30px 40px;
+            background: #f8f9fa;
+        }
+
+        .legend h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .legend-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .legend-item p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.9em;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .framework-container {
+                padding: 20px;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 0.85em;
+            }
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Zachman框架</h1>
+            <p class="subtitle">企业架构的经典框架 - 6x6矩阵模型</p>
+        </header>
+
+        <div class="intro">
+            <h2>什么是Zachman框架?</h2>
+            <p>Zachman框架是由John Zachman于1987年在IBM开发的企业架构框架。它提供了一种结构化的方法来定义和分析组织的信息基础设施。</p>
+            <p>该框架使用6x6矩阵组织企业架构,基于不同的<strong>视角(行)</strong>和<strong>方面(列)</strong>。每个单元格代表特定视角下对特定方面的描述。</p>
+            <p><strong>核心理念:</strong> 同一个复杂的事物可以从不同的角度、用不同的方式进行描述,以满足不同利益相关者的需求。</p>
+        </div>
+
+        <div class="framework-container">
+            <h2 style="color: #667eea; margin-bottom: 20px; text-align: center;">Zachman框架 6x6 矩阵</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>视角 \ 方面</th>
+                        <th>What<br>(数据)</th>
+                        <th>How<br>(流程)</th>
+                        <th>Where<br>(网络)</th>
+                        <th>Who<br>(人员)</th>
+                        <th>When<br>(时间)</th>
+                        <th>Why<br>(动机)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="row-header">Executive<br>范围视角<br>(规划者)</td>
+                        <td>
+                            <div class="cell-title">清单识别</div>
+                            <div class="cell-content">重要事物列表<br>业务实体清单</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">流程识别</div>
+                            <div class="cell-content">业务流程列表<br>主要功能</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">分布识别</div>
+                            <div class="cell-content">位置列表<br>业务地点</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">责任识别</div>
+                            <div class="cell-content">组织单元<br>重要角色</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">时间识别</div>
+                            <div class="cell-content">事件/周期<br>业务时间表</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">动机识别</div>
+                            <div class="cell-content">业务目标<br>战略目的</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Business<br>业务视角<br>(所有者)</td>
+                        <td>
+                            <div class="cell-title">清单定义</div>
+                            <div class="cell-content">业务实体<br>语义模型</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">流程定义</div>
+                            <div class="cell-content">业务流程<br>工作流</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">分布定义</div>
+                            <div class="cell-content">业务位置<br>物流网络</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">责任定义</div>
+                            <div class="cell-content">角色/职责<br>组织结构</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">时间定义</div>
+                            <div class="cell-content">业务事件<br>业务周期</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">动机定义</div>
+                            <div class="cell-content">业务规则<br>业务策略</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Architect<br>架构视角<br>(设计者)</td>
+                        <td>
+                            <div class="cell-title">清单表示</div>
+                            <div class="cell-content">逻辑数据模型<br>数据关系图</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">流程表示</div>
+                            <div class="cell-content">应用架构<br>系统功能</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">分布表示</div>
+                            <div class="cell-content">分布式系统<br>系统架构</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">责任表示</div>
+                            <div class="cell-content">用户界面<br>访问控制</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">时间表示</div>
+                            <div class="cell-content">处理结构<br>状态图</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">动机表示</div>
+                            <div class="cell-content">规则模型<br>业务逻辑</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Engineer<br>工程视角<br>(构建者)</td>
+                        <td>
+                            <div class="cell-title">清单规范</div>
+                            <div class="cell-content">物理数据模型<br>数据库设计</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">流程规范</div>
+                            <div class="cell-content">系统架构<br>程序设计</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">分布规范</div>
+                            <div class="cell-content">网络配置<br>技术架构</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">责任规范</div>
+                            <div class="cell-content">身份管理<br>安全设计</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">时间规范</div>
+                            <div class="cell-content">调度规范<br>时序设计</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">动机规范</div>
+                            <div class="cell-content">实施策略<br>规则引擎</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Technician<br>技术视角<br>(分包商)</td>
+                        <td>
+                            <div class="cell-title">清单配置</div>
+                            <div class="cell-content">数据定义<br>数据库模式</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">流程配置</div>
+                            <div class="cell-content">程序/配置<br>代码模块</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">分布配置</div>
+                            <div class="cell-content">组件位置<br>部署配置</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">责任配置</div>
+                            <div class="cell-content">安全访问控制<br>权限配置</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">时间配置</div>
+                            <div class="cell-content">时间定义<br>调度配置</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">动机配置</div>
+                            <div class="cell-content">详细规则<br>业务规则配置</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Enterprise<br>企业视角<br>(用户)</td>
+                        <td>
+                            <div class="cell-title">清单实例</div>
+                            <div class="cell-content">数据事务<br>实际数据记录</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">流程实例</div>
+                            <div class="cell-content">运行流程<br>实际操作</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">分布实例</div>
+                            <div class="cell-content">运营站点<br>实际位置</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">责任实例</div>
+                            <div class="cell-content">活跃用户<br>实际操作者</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">时间实例</div>
+                            <div class="cell-content">实际事件日志<br>时间记录</div>
+                        </td>
+                        <td>
+                            <div class="cell-title">动机实例</div>
+                            <div class="cell-content">性能指标<br>实际结果</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="legend">
+            <h3>📊 框架说明</h3>
+
+            <h4 style="color: #667eea; margin: 20px 0 10px 0;">列(方面) - 6个基本问题:</h4>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <h4>What (数据)</h4>
+                    <p>关注企业的数据和信息,包括实体、属性和关系。回答"什么数据是重要的?"</p>
+                </div>
+                <div class="legend-item">
+                    <h4>How (流程)</h4>
+                    <p>关注企业的功能和流程,包括活动、转换和工作流。回答"如何运作?"</p>
+                </div>
+                <div class="legend-item">
+                    <h4>Where (网络)</h4>
+                    <p>关注企业的位置和网络,包括地点、连接和分布。回答"在哪里发生?"</p>
+                </div>
+                <div class="legend-item">
+                    <h4>Who (人员)</h4>
+                    <p>关注企业的人员和组织,包括角色、责任和组织单元。回答"谁负责?"</p>
+                </div>
+                <div class="legend-item">
+                    <h4>When (时间)</h4>
+                    <p>关注企业的时间和事件,包括周期、时间表和时序。回答"何时发生?"</p>
+                </div>
+                <div class="legend-item">
+                    <h4>Why (动机)</h4>
+                    <p>关注企业的目标和动机,包括目的、策略和业务规则。回答"为什么这样做?"</p>
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin: 30px 0 10px 0;">行(视角) - 6个利益相关者视角:</h4>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <h4>1. Executive (范围)</h4>
+                    <p>高层管理者视角,关注企业范围、目标和背景。提供概览和估算。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>2. Business (业务)</h4>
+                    <p>业务所有者视角,关注业务概念、流程和组织。定义业务需求。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>3. Architect (架构)</h4>
+                    <p>系统架构师视角,关注系统逻辑和设计。定义系统需求和架构。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>4. Engineer (工程)</h4>
+                    <p>工程师视角,关注技术实现和约束。定义技术规范和设计。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>5. Technician (技术)</h4>
+                    <p>技术人员视角,关注具体组件和配置。定义详细的实施规范。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>6. Enterprise (运营)</h4>
+                    <p>实际用户视角,关注运营实例和实际使用。反映系统的实际运行状态。</p>
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin: 30px 0 10px 0;">🎯 框架的核心价值:</h4>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <h4>全面覆盖</h4>
+                    <p>确保企业架构的所有方面都被考虑,没有遗漏。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>改善沟通</h4>
+                    <p>为不同利益相关者提供共同语言,促进理解和协作。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>战略对齐</h4>
+                    <p>确保IT与业务目标保持一致,支持战略决策。</p>
+                </div>
+                <div class="legend-item">
+                    <h4>风险管理</h4>
+                    <p>通过全面理解架构组件和依赖关系来识别和缓解风险。</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Zachman框架可视化 | 基于John Zachman的企业架构框架</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">该框架最初由John Zachman于1987年在IBM开发</p>
+        </footer>
+    </div>
+
+    <script>
+        // 添加交互效果
+        document.querySelectorAll('td:not(.row-header)').forEach(cell => {
+            cell.addEventListener('click', function() {
+                const title = this.querySelector('.cell-title')?.textContent || '';
+                const content = this.querySelector('.cell-content')?.textContent || '';
+                alert(`${title}\n\n${content}`);
+            });
+        });
+
+        // 添加悬停提示
+        document.querySelectorAll('td:not(.row-header)').forEach(cell => {
+            cell.addEventListener('mouseenter', function(e) {
+                this.style.transform = 'scale(1.05)';
+            });
+
+            cell.addEventListener('mouseleave', function(e) {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
+
